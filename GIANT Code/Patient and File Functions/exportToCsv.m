@@ -11,7 +11,7 @@ function [ ] = exportToCsv(patients, exportPath, overwrite)
 % - getHeader()
 % - printToFile(fileId, lineNumber, values, newline, delim)
 % - getExportValues(patient, study, series, file, sequenceNumber)
-% - file.isValidForExport
+% - file.isValidForExport()
 
 newline = '\n';
 delim = ',';
@@ -125,8 +125,8 @@ if isempty(err) %write file anew
                 for l=1:length(files)
                     file = files(l);
                     
-                    if file.validForExport()
-                        values = getExportValues(patient, study, series, file, sequenceNumber);
+                    if file.isValidForExport()
+                        values = getExportValues(patient, study, singularSeries, file, sequenceNumber);
                         printToFile(fileId, lineNumber, values, newline, delim);
                         
                         lineNumber = lineNumber + 1;
