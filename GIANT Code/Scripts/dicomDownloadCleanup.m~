@@ -1,36 +1,39 @@
-function [] = dicomDownloadCleanup(rawDataPath)
+function [] = dicomDownloadCleanup(rawDataPath, newDataPath)
 
 dirList = dir(rawDataPath);
 
 for i=1:length(dirList)
-    entry = dirList(i);
-    downloadFolderName = entry.name;
+    entry = dirList(1);
+    name = entry.name;
     
-    if entry.isdir && ~(strcmp(downloadFolderName,'.') || strcmp(downloadFolderName,'..'))
-        if ~isempty(strfind(downloadFolderName, 'download')) %is a download folder
-            [patientName, oldPatientDir] = cleanupPatient(strcat(rawDataPath,'/',downloadFolderName));
+    if entry.isdir && ~(strcmp(name,'.') || strcmp(name,'..'))
+        if ~isempty(strfind(name, 'download')) %is a download folder
+            [patientName, oldPatientDir] = createPatient(strcat(rawDataPath,'/',name));
             
-            patientFolderName = cleanString(patientName);
+            newName = strcat(rawDataPath, '/', cleanString(patientName));
             
-            newName = strcat(rawDataPath, '/', patientFolderName);
+            patientAlreadyExists = 
             
-            patientAlreadyExists = exist(newName, 'dir');
+            movefile(oldPatientDir, newName);
             
-            if patientAlreadyExists ~= 0
-                warning(['Directory already exists at: ', newName, '. Processed patient at ', strcat(rawDataPath,'/',downloadFolderName,'/',patientFolderName) , ' will not be copied over']);
-            else            
-                movefile(oldPatientDir, newName);
-            
-                rmdir(strcat(rawDataPath,'/',downloadFolderName));
-            end
+            rmdir(strcat(rawDataPath,'/',name));
         end            
     end
 end
 
 
+
+
+
+
+
+
+
+
+
 end
 
-function [patientName, oldPatientDir] = cleanupPatient(downloadPath)
+function [patientName, oldPatientDir] = createPatient(downloadPath)
 
     dirList = dir(downloadPath);
 
@@ -46,7 +49,7 @@ function [patientName, oldPatientDir] = cleanupPatient(downloadPath)
             end
         end
 
-        patientName = cleanupStudies(strcat(downloadPath, '/', patientFolder));
+        patientName = createStudies(strcat(downloadPath, '/', patientFolder));
         
         oldPatientDir = strcat(downloadPath, '/', patientFolder);
         
@@ -57,8 +60,12 @@ function [patientName, oldPatientDir] = cleanupPatient(downloadPath)
     end
 end
 
-function patientName = cleanupStudies(patientPath)
-
+function patientName = createStudies(patientPath)
+% [studies, patientId] = createStudies(folderPath)
+% creates a list of studies based upon the path given. Each directory at
+% the path given will be considered a study, each containing directories of
+% studies, which in turn contain .dcm (DICOM) files
+% also returns the patientId of the DICOM files
 dirList = dir(patientPath);
 
 patientName = '';
@@ -74,7 +81,7 @@ for i=1:length(dirList)
     
     if entry.isdir && ~(strcmp(studyFolder, '..') || strcmp(studyFolder, '.'))
         
-        [patientName, studyDescription, studyTime] = cleanupSeries(strcat(patientPath,'/', studyFolder), patientName);
+        [patientName, studyDescription, studyTime] = createSeries(strcat(patientPath,'/', studyFolder), patientName);
         
         if ~isempty(studyDescription)
             if isempty(studyTime)
@@ -111,7 +118,7 @@ sortedStudies = cell2struct(sortedStudiesCell, fieldnames(studies), 1);
 for i=1:length(sortedStudies)
     study = sortedStudies(i);
     
-    numDuplicates = checkForStudyDuplicates(sortedStudies, i);
+    numDuplicates = checkForDuplicates(sortedStudies, i);
     
     if numDuplicates == 0
         uniqueEnd = '';
@@ -129,7 +136,7 @@ end
 
 end
 
-function [patientName, studyDescription, studyTime] = cleanupSeries(studyPath, patientName)
+function [patientName, studyDescription, studyTime] = createSeries(studyPath, patientName)
 
 dirList = dir(studyPath);
 
@@ -144,7 +151,7 @@ for i=1:length(dirList)
     seriesFolder = entry.name;
     
     if entry.isdir && ~(strcmp(seriesFolder, '..') || strcmp(seriesFolder, '.'))
-        [patientName, studyDescription, studyTime, seriesNumber, seriesDescription] = cleanupFiles(strcat(studyPath,'/', seriesFolder), patientName, studyDescription, studyTime);
+        [patientName, studyDescription, studyTime, seriesNumber, seriesDescription] = createFiles(strcat(studyPath,'/', seriesFolder), patientName, studyDescription, studyTime);
         
         if isempty(seriesDescription)
             seriesDescription = 'No Description';
@@ -158,7 +165,7 @@ for i=1:length(dirList)
         
         seriesFolderName = [seriesNumberString, ' - ', cleanString(seriesDescription)];
         
-        numDuplicates = checkForDuplicates(seriesFolderNames, seriesFolderName);
+        numDuplicates = checkForSeriesDuplicates(seriesFolderNames, seriesFolderName);
         
         if numDuplicates == 0
             uniqueEnd = '';
@@ -182,7 +189,9 @@ end
 
 end
 
-function [patientName, studyDescription, studyTime, seriesNumber, seriesDescription] = cleanupFiles(seriesPath, patientName, studyDescription, studyTime)
+function [patientName, studyDescription, studyTime, seriesNumber, seriesDescription] = createFiles(seriesPath, patientName, studyDescription, studyTime)
+
+
 
 dirList = dir(seriesPath);
 
@@ -196,10 +205,46 @@ for i=1:length(dirList)
     entry = dirList(i);
     fileName = entry.name;
     
+    
     if entry.isdir 
-        if ~(strcmp(fileName, '..') || strcmp(fileName, '.')) % another directory is present, shouldn't happen
+        if ~(strcmp(fileName, '..') || strcmp(fileName, '.')) % another directory is present, rare but can happen
             error(['Directory found when expecting DICOMs at: ', seriesPath, '/', fileName]);
-        end  
+%             subDirList = dir(strcat(seriesPath, '/', fileName));
+%             
+%             for j=1:length(subDirList)
+%                 subEntry = subDirList(j);
+%                 subFileName = subEntry.name;
+%                 
+%                 if subEntry.isdir 
+%                     if ~(strcmp(subFileName, '..') || strcmp(subFileName, '.')) %another directory!!! ENOUGH!! PUNISH THEM!!
+%                         error(['Directory found when expecting DICOMs at: ', seriesPath, '/', fileName, '/', subFileName]);
+%                     end
+%                 else
+%                     len = length(subFileName);
+%                     fileType = subFileName(len-2:len);
+%                     
+%                     if strcmp(fileType, 'dcm') %import this bad boy
+%                         dicomHeader = dicominfo(strcat(seriesPath,'/',fileName,'/',subFileName));
+%                         [patientName, studyDescription, studyTime, seriesNumber, seriesDescription] = extractHeaderInfo(dicomHeader, patientName, studyDescription, studyTime, seriesNumber, seriesDescription);
+%                         instanceNumber = padWithZeros(dicomHeader.InstanceNumber, 4);
+%                         
+%                         oldName = strcat(seriesPath,'/',fileName,'/',subFileName);
+%                         newName = [seriesPath,'/',instanceNumber,' - ',fileName,'.dcm'];
+%                         
+%                         if ~strcmp(oldName, newName)
+%                             movefile(oldName, newName);
+%                         end
+%                     else
+%                         warning(['Non DICOM file found at: ', seriesPath, '/', fileName, '/', subFileName]);
+%                     end
+%                 end
+%             end
+%             
+%             % all files in this directory are now moved out, so delete it
+%             rmdir(strcat(seriesPath,'/',fileName));
+        end
+        
+        
     else
         len = length(fileName);
         fileType = fileName(len-2:len);
@@ -214,7 +259,7 @@ for i=1:length(dirList)
                 newFileName = '####';
             end            
                     
-            numDuplicates = checkForDuplicates(newFileNames, newFileName);
+            numDuplicates = checkForSeriesDuplicates(newFileNames, newFileName);
             
             if numDuplicates == 0
                 uniqueEnd = '';
@@ -260,7 +305,7 @@ function str = padWithZeros(num, targetLength)
         
         str = [prefix, baseStr];
     else
-        %warning([baseStr, ' is too long for a target length of ', num2str(targetLength)]);
+        warning([baseStr, ' is too long for a target length of ', num2str(targetLength)]);
         
         str = baseStr;
     end
@@ -282,7 +327,7 @@ function epoch = dateAndTimeToEpoch(dateString, timeString)
         minuteString = timeString(2:3);
     end
 
-    dateString = datestr([str2double(yearString), str2double(monthString), str2double(dayString), str2double(hourString), str2double(minuteString), 0]);
+    dateString = datestr([str2num(yearString), str2num(monthString), str2num(dayString), str2num(hourString), str2num(minuteString), 0]);
     epoch = cdfepoch(dateString);
 end
 
@@ -296,19 +341,7 @@ function [patientName, studyDescription, studyTime, seriesNumber, seriesDescript
         studyDescription = dicomHeader.StudyDescription;
     end
     
-    if isfield(dicomHeader, 'StudyDate')
-        studyDateString = dicomHeader.StudyDate;
-    else
-        studyDateString = '00000101'; %Jan 1, 0000 as dummy date
-    end
-    
-    if isfield(dicomHeader, 'StudyTime')
-        studyTimeString = dicomHeader.StudyTime;
-    else
-        studyTimeString = '0000'; % 00:00 as dummy time
-    end    
-    
-    dicomStudyTime = dateAndTimeToEpoch(studyDateString, studyTimeString);
+    dicomStudyTime = dateAndTimeToEpoch(dicomHeader.StudyDate, dicomHeader.StudyTime);
     
     if isempty(studyTime)
         studyTime = dicomStudyTime;
@@ -356,7 +389,7 @@ function [patientName, studyDescription, studyTime, seriesNumber, seriesDescript
 
 end
 
-function numDuplicates = checkForStudyDuplicates(sortedStudies, i)
+function numDuplicates = checkForDuplicates(sortedStudies, i)
 % since sortedStudies is sorted, only backtrack, looking to see how many so
 % far would have been made
 
@@ -380,11 +413,11 @@ end
 
 end
 
-function numDuplicates = checkForDuplicates(folderNames, matchName)
+function numDuplicates = checkForSeriesDuplicates(seriesFolderNames, matchName)
     numDuplicates = 0;
     
-    for i=1:length(folderNames)
-        if strcmp(folderNames{i}, matchName)
+    for i=1:length(seriesFolderNames)
+        if strcmp(seriesFolderNames{i}, matchName)
             numDuplicates = numDuplicates + 1;
         end
     end
