@@ -10,37 +10,28 @@ classdef Date
     methods
                 
         function date = Date(dicomDate)
-            monthString = dicomDate(5:6);
-            dayString = dicomDate(7:8);
-            yearString = dicomDate(1:4);
-            
-            date.month = str2num(monthString);
-            date.day = str2num(dayString);
-            date.year = str2num(yearString);
+            if isempty(dicomDate) %dummy date of Jan 1, 0000
+                date.month = 1;
+                date.day = 1;
+                date.year = 0;
+            else
+                monthString = dicomDate(5:6);
+                dayString = dicomDate(7:8);
+                yearString = dicomDate(1:4);
+                
+                date.month = str2double(monthString);
+                date.day = str2double(dayString);
+                date.year = str2double(yearString);
+            end
         end
         
         function bool = lt(dateLeft, dateRight) %define less than
-            
-            if dateLeft.year > dateRight.year
-                bool = false;
-            elseif dateLeft.year < dateRight.year
-                bool = true;
-            else
-                if dateLeft.month > dateRight.month
-                    bool = false;
-                elseif dateLeft.month < dateRight.month
-                    bool = true;
-                else
-                    if dateLeft.day > dateRight.day
-                        bool = false;
-                    elseif dateLeft.day < dateRight.day
-                        bool = true;
-                    else %are equal
-                        bool = false;
-                    end
-                end
-            end
+            bool = dateLeft.getDatenum < dateRight.getDatenum;
                     
+        end
+        
+        function datenum = getDatenum(date)
+            datenum = todatenum(cdfepoch(datestr([date.year, date.month, date.day, 0, 0, 0])));
         end
         
         function string = display(date) %makes string output of date

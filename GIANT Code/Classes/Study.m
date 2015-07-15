@@ -7,6 +7,7 @@ classdef Study
     
     properties
         name = '';
+        date = Date.empty;
         
         series = Series.empty();
         currentSeriesNum = 0;
@@ -14,9 +15,10 @@ classdef Study
     
     methods
         %% Constructor %%
-        function study = Study(name, series)
+        function study = Study(name, series, studyDate)
             study.name = name;
             study.series = series;
+            study.date = Date(studyDate); %assumes studyDate is in format straight from the DICOM
             
             if ~isempty(series)
                 study.currentSeriesNum = 1;
