@@ -34,6 +34,8 @@ if folderPath ~= 0 %didn't click cancel
             
             patient = createPatient(patientId, studies);
             
+            patient = patient.sortStudies();
+            
             patient.changesPending = true;
             
             handles = updatePatient(patient, handles);

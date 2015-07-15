@@ -18,18 +18,20 @@ function [studies, patientId] = createStudies(folderPath)
         if entry.isdir && ~(strcmp(name, '..') || strcmp(name, '.'))
             numStudies = numStudies + 1;
 
-            [series, patientId] = createSeries(strcat(folderPath,'/', name), patientId); 
+            [series, patientId, studyDate] = createSeries(strcat(folderPath,'/', name), patientId); 
 
-            studies(numStudies) = Study(name, series);
+            studies(numStudies) = Study(name, series, studyDate);
         end
     end
 end
 
-function [series, patientId] = createSeries(folderPath, patientId)
+function [series, patientId, studyDate] = createSeries(folderPath, patientId)
     dirList = dir(folderPath);
     
     series = Series.empty;
     numSeries = 0;
+    
+    studyDate = '';
     
     for i=1:length(dirList)
         entry = dirList(i);
@@ -38,14 +40,14 @@ function [series, patientId] = createSeries(folderPath, patientId)
         if entry.isdir && ~(strcmp(name, '..') || strcmp(name, '.'))
             numSeries = numSeries + 1;
             
-            [files, patientId] = createFiles(strcat(folderPath,'/', name), patientId);
+            [files, patientId, studyDate] = createFiles(strcat(folderPath,'/', name), patientId, studyDate);
             
             series(numSeries) = Series(name, files);
         end
     end
 end
 
-function [files, patientId] = createFiles(folderPath, patientId)
+function [files, patientId, studyDate] = createFiles(folderPath, patientId, studyDate)
     dirList = dir(folderPath);
     
     files = emptyFile();
@@ -70,6 +72,10 @@ function [files, patientId] = createFiles(folderPath, patientId)
                     
                     if isempty(patientId)
                         patientId = newPatientId;
+                    end
+                    
+                    if isfield(dicomInfo, 'StudyDate') && isempty(studyDate)
+                        studyDate = dicomInfo.StudyDate;
                     end
                     
                     if strcmp(patientId, newPatientId) %verify all the files are from the same patient

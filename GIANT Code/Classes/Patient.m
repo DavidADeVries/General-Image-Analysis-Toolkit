@@ -188,6 +188,25 @@ classdef Patient
             end
         end
         
+        %% sortStudies %%
+        function patient = sortStudies(patient)
+            localStudies = patient.studies;
+            
+            dims = size(localStudies);
+            
+            datenumList = zeros(dims);
+            
+            for i=1:dims(2)
+                datenumList(i) = localStudies(i).date.getDatenum();
+            end
+            
+            [~, ind] = sort(datenumList);
+            
+            sortedStudies = localStudies(ind);
+            
+            patient.studies = sortedStudies;
+        end
+        
         %% earlierImage %%
         function patient = earlierImage(patient)
             study = patient.getCurrentStudy();
