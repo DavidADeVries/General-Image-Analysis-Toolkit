@@ -10,10 +10,10 @@ classdef Date
     methods
                 
         function date = Date(dicomDate)
-            if isempty(dicomDate) %dummy date of Jan 1, 0000
+            if isempty(dicomDate) %dummy date of Jan 1, 1500
                 date.month = 1;
                 date.day = 1;
-                date.year = 0;
+                date.year = 1500; %for some reason this is the earliest year that works with datestr
             else
                 monthString = dicomDate(5:6);
                 dayString = dicomDate(7:8);

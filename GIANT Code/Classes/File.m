@@ -4,7 +4,7 @@ classdef File
     properties
         dicomInfo
         name = '';
-        image
+        imagePath = '';
         
         date % I know dicomInfo would hold this, but to have it lin an easily compared form is nice
 
@@ -13,13 +13,22 @@ classdef File
     
     methods
         %% Constructor %%
-        function file = File(name, dicomInfo, dicomImage)
+        function file = File(name, dicomInfo, imagePath)
             file.name = name;
             file.dicomInfo = dicomInfo;
-            file.image = dicomImage;
+            file.imagePath = imagePath;
             file.date = Date(dicomInfo.StudyDate);
             
             file.undoCache = UndoCache(file);
+        end
+        
+        %% getImage %%
+        function image = getImage(file)
+            if isempty(file)
+                image = [];
+            else
+                image = dicomread(file.imagePath);
+            end
         end
                         
         %% getSeriesDescription %%

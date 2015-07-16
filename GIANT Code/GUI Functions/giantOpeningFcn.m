@@ -20,6 +20,8 @@ handles.updateUndoCache = false; %tells upclick listener whether or not to save 
 
 handles.patients = emptyPatient();
 
+handles.currentImage = [];
+
 % empty handle structures
 handles = emptyDisplayHandles(handles);
 

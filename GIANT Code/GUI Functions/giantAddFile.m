@@ -28,7 +28,7 @@ if imageFilename ~= 0 %user didn't click cancel!
         dicomImage = double(dicomread(completeFilepath));
         
         if (length(size(dicomImage)) == 2) %no multisplice support, sorry            
-            newFile = createFile(imageFilename, dicomInfo, dicomImage);
+            newFile = createFile(imageFilename, dicomInfo, completeFilepath);
             
             currentPatient = currentPatient.addFile(newFile);
             
@@ -37,6 +37,8 @@ if imageFilename ~= 0 %user didn't click cancel!
             handles = updatePatient(currentPatient, handles);
             
             currentFile = getCurrentFile(handles);
+            
+            handles.currentImage = dicomImage;
             
             %update view
             updateGui(currentFile, handles);

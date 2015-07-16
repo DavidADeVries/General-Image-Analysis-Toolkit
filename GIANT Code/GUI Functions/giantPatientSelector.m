@@ -13,6 +13,8 @@ handles.currentPatientNum = get(hObject,'Value');
 
 currentFile = getCurrentFile(handles);
 
+handles.currentImage = currentFile.getImage();
+
 %update GUI
 updateGui(currentFile, handles);
 

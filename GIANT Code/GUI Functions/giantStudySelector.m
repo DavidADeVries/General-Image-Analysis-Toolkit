@@ -17,6 +17,8 @@ handles = updatePatient(currentPatient, handles);
 
 currentFile = getCurrentFile(handles);
 
+handles.currentImage = currentFile.getImage();
+
 %update GUI
 updateGui(currentFile, handles);
 

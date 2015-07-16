@@ -42,6 +42,8 @@ if folderPath ~= 0 %didn't click cancel
             
             currentFile = getCurrentFile(handles);
             
+            handles.currentImage = currentFile.getImage();
+            
             %update view
             updateGui(currentFile, handles);
             
