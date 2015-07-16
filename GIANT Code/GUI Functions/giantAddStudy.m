@@ -14,7 +14,7 @@ studyName = studyNameDialog();
 if ~isempty(studyName) %empty means user pressed cancel, do nothing
     currentPatient = getCurrentPatient(handles);
     
-    newStudy = Study(studyName, Series.empty);
+    newStudy = Study(studyName, Series.empty,'');
     
     currentPatient = currentPatient.addStudy(newStudy);
     
@@ -22,6 +22,8 @@ if ~isempty(studyName) %empty means user pressed cancel, do nothing
     
     handles = updatePatient(currentPatient, handles);
     currentFile = getCurrentFile(handles);
+    
+    handles.currentImage = currentFile.getImage();
     
     %update GUI
     updateGui(currentFile, handles);

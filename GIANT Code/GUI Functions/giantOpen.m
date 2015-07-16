@@ -40,6 +40,8 @@ if imageFilename ~= 0 %user didn't click cancel!
         
         currentFile = patient.getCurrentFile();
         
+        handles.currentImage = currentFile.getImage();
+        
         handles = updatePatient(patient, handles);
         
         %update Gui

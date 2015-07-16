@@ -24,6 +24,8 @@ if ~isempty(seriesName) %empty means user pressed cancel, do nothing
     handles = updatePatient(currentPatient, handles);
     currentFile = getCurrentFile(handles);
     
+    handles.currentImage = currentFile.getImage();
+    
     %update GUI
     updateGui(currentFile, handles);
     

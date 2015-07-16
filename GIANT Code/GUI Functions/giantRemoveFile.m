@@ -23,6 +23,8 @@ if ~cancelled
     handles = updatePatient(currentPatient, handles);    
     currentFile = currentPatient.getCurrentFile();
     
+    handles.currentImage = currentFile.getImage();
+    
     %GUI updated
     updateGui(currentFile, handles);
     

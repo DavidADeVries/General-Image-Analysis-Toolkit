@@ -10,39 +10,20 @@ function [  ] = giantCloseAllPatients( hObject, handles )
 %
 % Required constants:
 
-for i=1:handles.numPatients
-    patient = handles.patients(i);
-    
-    closeCancelled = false;
-    saveFirst = false;
-    
-    if patient.changesPending;
-        [closeCancelled, saveFirst] = pendingChangesDialog(); %prompts user if they want to save unsaved changes
-    end
-    
-    if closeCancelled
-        break;
-    elseif saveFirst %user chose to save
-        patient.saveToDisk();
-    end  
-end
+closeCancelled = false;
 
-if ~closeCancelled
-    handles.patients = emptyPatient();
-    handles.currentPatientNum = 0;
-    handles.numPatients = 0;
+i = 1;
+
+numPatients = handles.numPatients;
+
+while i<=numPatients && ~closeCancelled %if user selects cancel at any point, the close all stops where it is
+    [closeCancelled, handles] = closePatient(hObject, handles); %simply closes the current patient for however many patients there are
     
-    currentFile = emptyFile();
-    
-    %GUI updated
-    updateGui(currentFile, handles);
-    
-    %displayed imaged updated
-    handles = drawAll(currentFile, handles, hObject);
-    
-    %push up changes
-    guidata(hObject, handles);
+    i = i+1;
 end
+        
+%push up changes
+guidata(hObject, handles);
 
 end
 

@@ -82,7 +82,7 @@ function [files, patientId, studyDate] = createFiles(folderPath, patientId, stud
                         
                         numFiles = numFiles + 1;
                     
-                        files(numFiles) = createFile(name, dicomInfo, dicomImage);
+                        files(numFiles) = createFile(name, dicomInfo, completeFilepath);
                     else
                         patientIdConflictDialog(patientId, newPatientId, completeFilepath);
                     end
