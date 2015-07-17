@@ -27,7 +27,7 @@ classdef File
             if isempty(file)
                 image = [];
             else
-                image = dicomread(file.imagePath);
+                image = double(dicomread(file.imagePath));
             end
         end
                         
