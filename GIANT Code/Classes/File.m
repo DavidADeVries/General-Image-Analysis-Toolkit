@@ -27,7 +27,17 @@ classdef File
             if isempty(file)
                 image = [];
             else
-                image = double(dicomread(file.imagePath));
+                try
+                    image = double(dicomread(file.imagePath));
+                catch
+                    image = [];
+                    
+                    message = ['An error occurred when trying to open the file at: ', file.imagePath];
+                    icon = 'error';
+                    title = 'File Error';
+                    
+                    waitfor(msgbox(message, title, icon));
+                end
             end
         end
                         

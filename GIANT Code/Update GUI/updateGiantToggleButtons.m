@@ -5,6 +5,12 @@ function [ ] = updateGiantToggleButtons( handles )
 disableAllToggles(handles);
 
 % always available
+
+% drop downs too
+set(handles.patientSelector, 'Enable', 'on');
+set(handles.studySelector, 'Enable', 'on');
+set(handles.seriesSelector, 'Enable', 'on');
+
 set(handles.open, 'Enable', 'on');
 set(handles.menuOpen, 'Enable', 'on');
 
@@ -65,13 +71,28 @@ if ~isempty(currentPatient) %add in patient operations
             set(handles.menuAddFile, 'Enable', 'on');        
             set(handles.menuRemoveSeries, 'Enable', 'on');
             
+            if currentPatient.getCurrentSeriesNumInStudy() ~= 1
+                set(handles.previousSeries, 'Enable', 'on');
+                
+                set(handles.menuPreviousSeries, 'Enable', 'on');
+            end
+            
+            if currentPatient.getCurrentSeriesNumInStudy() ~= currentPatient.getNumSeriesInStudy()
+                set(handles.nextSeries, 'Enable', 'on');
+                
+                set(handles.menuNextSeries, 'Enable', 'on');
+            end
+            
             currentFile = currentSeries.getCurrentFile();
             
             if ~isempty(currentFile) %add in file operations
                 % on no matter what state currentFile is in
                 set(handles.removeFile, 'Enable', 'on');
+                set(handles.exportAsImage, 'Enable', 'on');
                 
-                set(handles.menuRemoveFile, 'Enable', 'on');
+                set(handles.menuRemoveFile, 'Enable', 'on');                
+                set(handles.menuExportAsImage, 'Enable', 'on');
+                
                    
                 % undo/redo buttons
                 

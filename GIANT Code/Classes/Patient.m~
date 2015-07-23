@@ -326,7 +326,6 @@ classdef Patient
                         fclose(fid);
                     else
                         error = true;
-                        patient.savePath = ''; %empty it again
                     end
                 end
             end
@@ -336,23 +335,9 @@ classdef Patient
                 
                 waitHandle = pleaseWaitDialog('saving patient data.');
                 
-                try
-                    save(patient.savePath, 'patient');
-                catch
-                    error = true;
-                end
+                save(patient.savePath, 'patient');
                 
                 delete(waitHandle);
-            end
-            
-            if error
-                patient.changesPending = true; %revert back
-                
-                message = 'An error occurred when saving! Patient was not saved!';
-                icon = 'error';
-                title = 'Save Error';
-                
-                msgbox(message, title, icon);
             end
         end
     end

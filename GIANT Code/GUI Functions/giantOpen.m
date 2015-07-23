@@ -21,36 +21,51 @@ if imageFilename ~= 0 %user didn't click cancel!
     
     openCancelled = false;
     
+    error = false;
+    
     % load previous analysis file .mat
-    loadedData = load(completeFilepath);
     
-    patient = loadedData.patient;
-    
-    [patientNum, ~] = findPatient(handles.patients, patient.patientId);
-    
-    if patientNum == 0 % create new
-        handles.numPatients = handles.numPatients + 1;
-        patientNum = handles.numPatients;
-    else %overwrite whatever patient with the same id was there before
-        openCancelled = overwritePatientDialog(); %confirm with user that they want to overwrite
+    try
+        loadedData = load(completeFilepath);
+    catch
+        error = true;
     end
     
-    if ~openCancelled        
-        handles.currentPatientNum = patientNum;
+    if ~error
+        patient = loadedData.patient;
         
-        currentFile = patient.getCurrentFile();
+        [patientNum, ~] = findPatient(handles.patients, patient.patientId);
         
-        handles.currentImage = currentFile.getImage();
+        if patientNum == 0 % create new
+            handles.numPatients = handles.numPatients + 1;
+            patientNum = handles.numPatients;
+        else %overwrite whatever patient with the same id was there before
+            openCancelled = overwritePatientDialog(); %confirm with user that they want to overwrite
+        end
         
-        handles = updatePatient(patient, handles);
+        if ~openCancelled
+            handles.currentPatientNum = patientNum;
+            
+            currentFile = patient.getCurrentFile();
+            
+            handles.currentImage = currentFile.getImage();
+            
+            handles = updatePatient(patient, handles);
+            
+            %update Gui
+            updateGui(currentFile, handles);
+            
+            handles = drawAll(currentFile, handles, hObject);
+            
+            % pushup changes
+            guidata(hObject, handles);
+        end
+    else
+        message = 'An error occurred when trying to open the saved patient data selected!';
+        icon = 'error';
+        title = 'Open Error';
         
-        %update Gui
-        updateGui(currentFile, handles);
-        
-        handles = drawAll(currentFile, handles, hObject);        
-        
-        % pushup changes
-        guidata(hObject, handles);
+        waitfor(msgbox(message, title, icon));
     end
     
 end

@@ -25,9 +25,11 @@ if ~cancelled
     if exportFilename ~= 0 %didn't click cancel
         exportPath = strcat(exportPathname, exportFilename);
         
-        exportToCsv(patients, exportPath, overwrite);
+        error = exportToCsv(patients, exportPath, overwrite);
         
-        waitfor(exportCompleteDialog());
+        if ~error
+            waitfor(exportCompleteDialog());
+        end
     end
     
 end
