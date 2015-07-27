@@ -4,7 +4,7 @@ function [ ] = giantAddFile(hObject, handles)
 %
 % Required functions:
 %   updateGui(currentFile, handles)
-%   createFile(imageName, dicomInfo, dicomImage)
+%   createFile(imageName, dicomInfo, imagePath, dicomImage)
 %   drawAll(currentFile, handles, hObject)
 %
 % Required constants:
@@ -28,7 +28,7 @@ if imageFilename ~= 0 %user didn't click cancel!
         dicomImage = double(dicomread(completeFilepath));
         
         if (length(size(dicomImage)) == 2) %no multisplice support, sorry            
-            newFile = createFile(imageFilename, dicomInfo, completeFilepath);
+            newFile = createFile(imageFilename, dicomInfo, completeFilepath, dicomImage);
             
             currentPatient = currentPatient.addFile(newFile);
             

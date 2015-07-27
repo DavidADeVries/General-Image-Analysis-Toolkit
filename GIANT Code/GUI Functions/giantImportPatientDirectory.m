@@ -34,9 +34,6 @@ if folderPath ~= 0 %didn't click cancel
             
             patient = createPatient(patientId, studies);
             
-            %remove!!
-            patient.patientId = 'GJ-Tube-001';
-            
             patient = patient.sortStudies();
             
             patient.changesPending = true;
