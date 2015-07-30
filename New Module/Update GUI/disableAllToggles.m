@@ -18,9 +18,6 @@ set(handles.button1, 'Enable', 'off');
 set(handles.toggle1, 'Enable', 'off');
 set(handles.toggle1, 'State', 'off');
 
-set(handles.generalAccept, 'Visible', 'off');
-set(handles.generalDecline, 'Visible', 'off');
-
 %menu options
 
 set(handles.menuOption1, 'Enable', 'off');

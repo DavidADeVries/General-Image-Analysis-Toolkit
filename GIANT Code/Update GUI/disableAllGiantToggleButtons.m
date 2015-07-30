@@ -37,6 +37,9 @@ set(handles.earlierImage, 'Enable', 'off');
 set(handles.laterImage, 'Enable', 'off');
 set(handles.latestImage, 'Enable', 'off');
 
+set(handles.generalAccept, 'Visible', 'off');
+set(handles.generalDecline, 'Visible', 'off');
+
 %menu options
 set(handles.menuOpen, 'Enable', 'off');
 set(handles.menuSavePatient, 'Enable', 'off');
