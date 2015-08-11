@@ -48,14 +48,14 @@ classdef TextLabel
             % hold on;
             
             for i=1:4
-                handle = text(pointX, pointY, tagString, 'Color', borderColour, 'FontSize', fontSize, 'HorizontalAlignment', horizontalAlign);
+                handle = text(pointX, pointY, tagString, 'Clipping', 'on', 'Color', borderColour, 'FontSize', fontSize, 'HorizontalAlignment', horizontalAlign);
                 
                 borderHandles{i} = handle;
             end
             
             applyBorderShifts(borderHandles);
                         
-            textLabel.mainText = text(pointX, pointY, tagString, 'Color', fontColour, 'FontSize', fontSize, 'HorizontalAlignment', horizontalAlign);
+            textLabel.mainText = text(pointX, pointY, tagString, 'Clipping', 'on', 'Color', fontColour, 'FontSize', fontSize, 'HorizontalAlignment', horizontalAlign);
             
             textLabel.leftBorder = borderHandles{1};
             textLabel.rightBorder = borderHandles{2};
