@@ -134,6 +134,28 @@ classdef Patient
             end
         end
         
+        %% getNumSeriesInStudy %%
+        function numSeries = getNumSeriesInStudy(patient)
+            study = patient.getCurrentStudy();
+            
+            if ~isempty(study)
+                numSeries = study.numSeries();
+            else
+                numSeries = 0;
+            end
+        end
+        
+        %% getCurrentSeriesNumInStudy %%
+        function seriesNum = getCurrentSeriesNumInStudy(patient)
+            study = patient.getCurrentStudy();
+            
+            if ~isempty(study)
+                seriesNum = study.currentSeriesNum();
+            else
+                seriesNum = 0;
+            end
+        end
+        
         %% getAllSeriesForCurrentStudy %%
         function series = getAllSeriesForCurrentStudy(patient)
             study = patient.getCurrentStudy();
@@ -243,6 +265,24 @@ classdef Patient
             end
         end
         
+        %% previousSeries %%
+        function patient = previousSeries(patient)
+            study = patient.getCurrentStudy();
+            
+            if ~isempty(study)
+                patient.studies(patient.currentStudyNum) = study.previousSeries();
+            end
+        end
+        
+        %% nextSeries %%
+        function patient = nextSeries(patient)
+            study = patient.getCurrentStudy();
+            
+            if ~isempty(study)
+                patient.studies(patient.currentStudyNum) = study.nextSeries();
+            end
+        end
+        
         
         %% updateFile %%
         function [ patient ] = updateFile( patient, file, updateUndo, changesPending, varargin)
@@ -269,6 +309,8 @@ classdef Patient
         %% saveToDisk %%
         function [ patient ] = saveToDisk(patient)
             %saveToDisk saves the patient's data and open files to the disk
+            error = false;
+            
             if isempty(patient.savePath)
                 filename = strcat(Constants.SAVE_TITLE_SUGGESTION, {' '}, num2str(patient.patientId), '.mat');
                 path = strcat(Constants.SAVED_PATIENTS_DIRECTORY, filename);
@@ -279,18 +321,38 @@ classdef Patient
                     patient.savePath = strcat(savePathname, saveFilename);
                     
                     fid = fopen(patient.savePath, 'w'); %create file
-                    fclose(fid);
+                    
+                    if fid ~= -1
+                        fclose(fid);
+                    else
+                        error = true;
+                        patient.savePath = ''; %empty it again
+                    end
                 end
             end
             
-            if ~isempty(patient.savePath) %if not empty, save, otherwise abort
+            if ~error && ~isempty(patient.savePath) %if not empty, save, otherwise abort
                 patient.changesPending = false; % because they're being saved now :)
                 
                 waitHandle = pleaseWaitDialog('saving patient data.');
                 
-                save(patient.savePath, 'patient');
+                try
+                    save(patient.savePath, 'patient');
+                catch
+                    error = true;
+                end
                 
                 delete(waitHandle);
+            end
+            
+            if error
+                patient.changesPending = true; %revert back
+                
+                message = 'An error occurred when saving! Patient was not saved!';
+                icon = 'error';
+                title = 'Save Error';
+                
+                msgbox(message, title, icon);
             end
         end
     end

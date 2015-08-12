@@ -1,4 +1,4 @@
-function [ ] = exportToCsv(patients, exportPath, overwrite)
+function [ error ] = exportToCsv(patients, exportPath, overwrite)
 %exportToCsv exports the list of patients to the given .csv path.
 %'overwrite' specifies whether to overwrite the file completely, or whether
 %to append. Note that when appending, only the patients in the file that
@@ -18,7 +18,9 @@ delim = ',';
 header = getHeader();
 
 linesToKeep = cell(0);
-    
+
+error = false;
+
 if ~overwrite
     [fileId, err] = fopen(exportPath, 'r');
     
@@ -63,7 +65,13 @@ if ~overwrite
         
         fclose(fileId);
     else
-        warning(err);
+        message = 'An error occurred when trying open the .csv to append to! The export was aborted!';
+        icon = 'error';
+        title = 'Export Error';
+        
+        msgbox(message, title, icon);
+        
+        error = true;
     end
 end
     
@@ -140,7 +148,13 @@ if isempty(err) %write file anew
     fclose(fileId); % close file after done writing
     
 else
-    warning(err);
+    message = 'An error occurred when trying to export to the .csv! The export was aborted!';
+    icon = 'error';
+    title = 'Export Error';
+    
+    msgbox(message, title, icon);
+    
+    error = true;
 end
 
 end

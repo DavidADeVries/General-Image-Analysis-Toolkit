@@ -4,6 +4,10 @@ function [studies, patientId] = createStudies(folderPath)
 % the path given will be considered a study, each containing directories of
 % studies, which in turn contain .dcm (DICOM) files
 % also returns the patientId of the DICOM files
+
+% requires:
+%   createFile(imageName, dicomInfo, imagePath, dicomImage)
+
     dirList = dir(folderPath);
     studies = Study.empty;
 
@@ -81,8 +85,8 @@ function [files, patientId, studyDate] = createFiles(folderPath, patientId, stud
                     if strcmp(patientId, newPatientId) %verify all the files are from the same patient
                         
                         numFiles = numFiles + 1;
-                    
-                        files(numFiles) = createFile(name, dicomInfo, completeFilepath);
+                        
+                        files(numFiles) = createFile(name, dicomInfo, completeFilepath, dicomImage);
                     else
                         patientIdConflictDialog(patientId, newPatientId, completeFilepath);
                     end

@@ -176,6 +176,34 @@ classdef Study
                 study.series(study.currentSeriesNum) = localSeries.latestImage();
             end
         end
+        
+        %% previousSeries %%
+        function study = previousSeries(study)
+            seriesNum = study.currentSeriesNum();
+            
+            seriesNum = seriesNum - 1;
+            
+            if seriesNum < 1
+                seriesNum = 1; %stop at first series
+            end
+            
+            study.currentSeriesNum = seriesNum;
+        end
+        
+        %% nextSeries %%
+        function study = nextSeries(study)
+            seriesNum = study.currentSeriesNum();
+            
+            seriesNum = seriesNum + 1;
+            
+            lastSeriesNum = numSeries(study);
+            
+            if seriesNum > lastSeriesNum
+                seriesNum = lastSeriesNum; %stop at last series
+            end
+            
+            study.currentSeriesNum = seriesNum;
+        end
     end
     
 end

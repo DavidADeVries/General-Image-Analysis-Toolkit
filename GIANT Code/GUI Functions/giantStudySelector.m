@@ -12,6 +12,7 @@ function [ ] = giantStudySelector(hObject, handles)
 currentPatient = getCurrentPatient(handles);
 
 currentPatient.currentStudyNum = get(hObject,'Value');
+currentPatient.changesPending = true;
 
 handles = updatePatient(currentPatient, handles);
 

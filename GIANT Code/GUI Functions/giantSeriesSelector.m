@@ -12,6 +12,7 @@ function [ ] = giantSeriesSelector(hObject, handles)
 currentPatient = getCurrentPatient(handles);
 
 currentPatient = currentPatient.setCurrentSeriesNum(get(hObject,'Value'));
+currentPatient.changesPending = true;
 
 handles = updatePatient(currentPatient, handles);
 

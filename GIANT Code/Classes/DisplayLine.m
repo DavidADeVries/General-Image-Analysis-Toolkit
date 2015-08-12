@@ -11,15 +11,15 @@ classdef DisplayLine
         function displayLine = DisplayLine(line, borderColour, lineColour, lineWidth, arrowEnds)
             borderWidth = Constants.DISPLAY_LINE_BORDER_WIDTH;
             
-            displayLine.borderHandle = arrow(line.startPoint, line.endPoint, 'EdgeColor', borderColour, 'FaceColor', borderColour, 'Width', lineWidth + 2*borderWidth, 'Ends', arrowEnds, 'Length', 11, 'TipAngle', 35);
-            displayLine.lineHandle = arrow(line.startPoint, line.endPoint, 'EdgeColor', lineColour, 'FaceColor', lineColour, 'Width', lineWidth, 'Ends', arrowEnds, 'Length', 10, 'TipAngle', 30);
+            displayLine.borderHandle = arrow(line.startPoint, line.endPoint, 'EdgeColor', borderColour, 'FaceColor', borderColour, 'Width', lineWidth + 2*borderWidth, 'Ends', arrowEnds, 'Length', 11, 'TipAngle', 35, 'Clipping', 'on');
+            displayLine.lineHandle = arrow(line.startPoint, line.endPoint, 'EdgeColor', lineColour, 'FaceColor', lineColour, 'Width', lineWidth, 'Ends', arrowEnds, 'Length', 10, 'TipAngle', 30, 'Clipping', 'on');
         end
         
         %% update %%
         function [] = update(displayLine, line)
-            arrow(displayLine.lineHandle, 'Start', line.startPoint, 'Stop', line.endPoint);
+            arrow(displayLine.lineHandle, 'Start', line.startPoint, 'Stop', line.endPoint, 'Clipping', 'on');
     
-            arrow(displayLine.borderHandle, 'Start', line.startPoint, 'Stop', line.endPoint);
+            arrow(displayLine.borderHandle, 'Start', line.startPoint, 'Stop', line.endPoint, 'Clipping', 'on');
         end
         
         %% setVisible %%
@@ -42,4 +42,3 @@ classdef DisplayLine
     end
     
 end
-
