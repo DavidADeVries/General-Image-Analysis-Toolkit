@@ -32,6 +32,10 @@ axes(handles.imageAxes);
 imshow([],[]);
 cla(handles.imageAxes); % clear axes
 
+% provide callback for updates to be done when zoom is changed
+set(zoom(handles.imageAxes),'ActionPostCallback',@(x,y) giantZoomCallback(hObject));
+set(pan(handles.mainPanel),'ActionPostCallback',@(x,y) giantPanCallback(hObject));
+
 updateGui(emptyFile(), handles);
 
 % Update handles structure

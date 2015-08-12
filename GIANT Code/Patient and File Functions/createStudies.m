@@ -85,7 +85,7 @@ function [files, patientId, studyDate] = createFiles(folderPath, patientId, stud
                     if strcmp(patientId, newPatientId) %verify all the files are from the same patient
                         
                         numFiles = numFiles + 1;
-                    
+                        
                         files(numFiles) = createFile(name, dicomInfo, completeFilepath, dicomImage);
                     else
                         patientIdConflictDialog(patientId, newPatientId, completeFilepath);

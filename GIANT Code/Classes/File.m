@@ -5,19 +5,22 @@ classdef File
         dicomInfo
         name = '';
         imagePath = '';
+        zoomLims = struct('xLim', [], 'yLim', []);
         
-        date % I know dicomInfo would hold this, but to have it lin an easily compared form is nice
+        date % I know dicomInfo would hold this, but to have it in an easily compared form is nice
 
         undoCache = UndoCache.empty;
     end
     
     methods
         %% Constructor %%
-        function file = File(name, dicomInfo, imagePath)
+        function file = File(name, dicomInfo, imagePath, image)                        
             file.name = name;
             file.dicomInfo = dicomInfo;
             file.imagePath = imagePath;
             file.date = Date(dicomInfo.StudyDate);
+            
+            file = file.setToDefaultZoom(image);
             
             file.undoCache = UndoCache(file);
         end
@@ -144,6 +147,28 @@ classdef File
             cacheEntry = file.undoCache.cacheEntries(cacheLocation);
             
             file = cacheEntry.restoreToFile(file); 
+        end
+        
+        %% getZoomLims %%
+        function [xLim, yLim] = getZoomLims(file)
+            xLim = file.zoomLims.xLim;
+            yLim = file.zoomLims.yLim;
+        end
+        
+        %% setZoomLims
+        function file = setZoomLims(file, xLim, yLim)
+            file.zoomLims.xLim = xLim;
+            file.zoomLims.yLim = yLim;
+        end        
+        
+        %% setToDefaultZoom %%
+        function file = setToDefaultZoom(file, image)
+            dims = size(image);
+            xLim = [0.5, dims(2) + 0.5];
+            yLim = [0.5, dims(1) + 0.5];
+            
+            file.zoomLims.xLim = xLim;
+            file.zoomLims.yLim = yLim;
         end
         
         

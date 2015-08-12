@@ -37,6 +37,10 @@ set(handles.earlierImage, 'Enable', 'off');
 set(handles.laterImage, 'Enable', 'off');
 set(handles.latestImage, 'Enable', 'off');
 
+set(handles.zoomIn, 'Enable', 'off');
+set(handles.zoomOut, 'Enable', 'off');
+set(handles.pan, 'Enable', 'off');
+
 set(handles.generalAccept, 'Visible', 'off');
 set(handles.generalDecline, 'Visible', 'off');
 

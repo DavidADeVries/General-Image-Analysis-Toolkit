@@ -93,6 +93,10 @@ if ~isempty(currentPatient) %add in patient operations
                 set(handles.menuRemoveFile, 'Enable', 'on');                
                 set(handles.menuExportAsImage, 'Enable', 'on');
                 
+                set(handles.zoomIn, 'Enable', 'on');
+                set(handles.zoomOut, 'Enable', 'on');
+                set(handles.pan, 'Enable', 'on');
+                
                    
                 % undo/redo buttons
                 
