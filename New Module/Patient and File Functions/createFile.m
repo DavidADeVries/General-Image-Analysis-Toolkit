@@ -17,7 +17,7 @@ newVar1 = max(max(image));
 newVar2 = image(5,4);
 newVar3 = image(4,5);
 
-file = NewModuleFile(imageFilename, dicomInfo, imagePath, newVar1, newVar2, newVar3);
+file = NewModuleFile(imageFilename, dicomInfo, imagePath, image, newVar1, newVar2, newVar3);
 
 
 end
