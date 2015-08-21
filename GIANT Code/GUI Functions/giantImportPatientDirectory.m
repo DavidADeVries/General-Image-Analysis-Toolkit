@@ -13,49 +13,56 @@ function [ ] = giantImportPatientDirectory(hObject, handles)
 folderPath = uigetdir(Constants.RAW_DATA_DIRECTORY, 'Select Patient Directory');
 
 if folderPath ~= 0 %didn't click cancel
-    waitHandle = pleaseWaitDialog('importing directory.');
+    len = length(Constants.ROOT_PATH);
     
-    [studies, patientId] = createStudies(folderPath); %recursively creates studies, containing series, containing files (dicoms)
+    if (length(folderPath) >= len) && strcmp(folderPath(1:len), Constants.ROOT_PATH) % must get data from within the root path, or else proper file references for the images will likely get disrupted
         
-    if ~isempty(patientId) %if empty, there must have been no files contained in the directories given
-        [patientNum, ~] = findPatient(handles.patients, patientId); %see if the patient already exists
+        waitHandle = pleaseWaitDialog('importing directory.');
         
-        openCancelled = false;
+        [studies, patientId] = createStudies(folderPath); %recursively creates studies, containing series, containing files (dicoms)
         
-        if patientNum ~= 0 %ask user if they want to overwrite whatever patient with the same id was there before
-            openCancelled = overwritePatientDialog(); %confirm with user that they want to overwrite
-        else
-            handles.numPatients = handles.numPatients + 1;
-            patientNum = handles.numPatients;
+        if ~isempty(patientId) %if empty, there must have been no files contained in the directories given
+            [patientNum, ~] = findPatient(handles.patients, patientId); %see if the patient already exists
+            
+            openCancelled = false;
+            
+            if patientNum ~= 0 %ask user if they want to overwrite whatever patient with the same id was there before
+                openCancelled = overwritePatientDialog(patientId); %confirm with user that they want to overwrite
+            else
+                handles.numPatients = handles.numPatients + 1;
+                patientNum = handles.numPatients;
+            end
+            
+            if ~openCancelled %is not cancelled, assign new patient
+                handles.currentPatientNum = patientNum;
+                
+                patient = createPatient(patientId, studies);
+                
+                patient = patient.sortStudies();
+                
+                patient.changesPending = true;
+                
+                handles = updatePatient(patient, handles);
+                
+                currentFile = getCurrentFile(handles);
+                
+                handles.currentImage = currentFile.getImage();
+                
+                %update view
+                updateGui(currentFile, handles);
+                
+                handles = drawAll(currentFile, handles, hObject);
+                
+                %push up changes
+                
+                guidata(hObject, handles);
+            end
         end
         
-        if ~openCancelled %is not cancelled, assign new patient
-            handles.currentPatientNum = patientNum;
-            
-            patient = createPatient(patientId, studies);
-            
-            patient = patient.sortStudies();
-            
-            patient.changesPending = true;
-            
-            handles = updatePatient(patient, handles);
-            
-            currentFile = getCurrentFile(handles);
-            
-            handles.currentImage = currentFile.getImage();
-            
-            %update view
-            updateGui(currentFile, handles);
-            
-            handles = drawAll(currentFile, handles, hObject);
-            
-            %push up changes
-            
-            guidata(hObject, handles);
-        end
+        delete(waitHandle);
+    else
+        invalidDirectoryDialog();
     end
-    
-    delete(waitHandle);
 end
 
 end

@@ -6,7 +6,7 @@ function [ handles ] = drawAll(currentFile, handles, hObject)
 % Completely redraws the currentFile's image and anything else drawn on top
 % of it
 
-if isempty(currentFile)
+if isempty(currentFile) || isempty(handles.currentImage)
     cla(handles.imageAxes);
 else
     % these lines are an example.

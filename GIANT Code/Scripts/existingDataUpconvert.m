@@ -6,6 +6,7 @@ function [ ] = existingDataUpconvert( inDir, outDir )
 % maps, and the spit 'em out in the "outDir", all pretty like.
 
 addpath('/data/projects/General Image Analysis Toolkit/GIANT/metadata/GIANT Code/Classes');
+addpath('/data/projects/GJ Tube/GAS-SAM/metadata/GUI');
 addpath('/data/projects/GJ Tube/GAS-SAM/metadata/GUI/Classes');
 
 dirList = dir(inDir);
@@ -85,28 +86,19 @@ function newFile = upconvertFile(file)
     
     % from File
     
-    %newFile.dicomInfo = file.dicomInfo; % the constructor took care of it
-    %newFile.name = file.name; % the constructor took care of it
-    %newFile.imagePath = file.imagePath; % the constructor took care of it
+    newFile.dicomInfo = file.dicomInfo;
+    newFile.name = file.name; 
+    %newFile.imagePath = file.imagePath; %constructor fixes this
+    %automagically
+    newFile.zoomLims = file.zoomLims;
     
-    if file.roiOn
-        roiCoords = file.roiCoords;
-        
-        xLim = [roiCoords(1), roiCoords(1) + roiCoords(3)];
-        yLim = [roiCoords(2), roiCoords(2) + roiCoords(4)];
-        
-        newFile = newFile.setZoomLims(xLim, yLim);
-    else
-        % the constructor took care of it
-    end
+    newFile.date % the constructor took care of it
     
-    %newFile.date % the constructor took care of it
-    
-    newFile.undoCache = file.undoCache; %you might have to upconvert the undoCache as well, but not in this case
+    newFile.undoCache = updateUndoCache(file.undoCache, file); %you might have to upconvert the undoCache as well, but not in this case
     
     % from GasSamFile
     newFile.roiCoords = file.roiCoords;
-    %newFile.originalLimits % the constructor took care of it
+    newFile.originalLimits = file.originalLimits;
     newFile.contrastLimits = file.contrastLimits;
     
     newFile.roiOn = file.roiOn;
@@ -127,5 +119,39 @@ function newFile = upconvertFile(file)
     newFile.quickMeasurePoints = file.quickMeasurePoints;
     
     newFile.longitudinalOverlayOn = file.longitudinalOverlayOn;
+end
+
+function undoCache = updateUndoCache(undoCache, file)
+    cacheEntries = undoCache.cacheEntries;
+    
+    for i=1:length(cacheEntries)
+        cacheEntries(i) = updateCacheEntry(cacheEntries(i), file);
+    end
+    
+    undoCache.cacheEntries = cacheEntries;
+end
+
+function newCacheEntry = updateCacheEntry(cacheEntry, file)
+    newCacheEntry = CacheEntry(file); %we have to have a file to use the constructor. We replace all the values though so no big deal. Sure its a hack, watcha ya gonna do?
+    
+    newCacheEntry.roiCoords = cacheEntry.roiCoords;
+    newCacheEntry.contrastLimits = cacheEntry.contrastLimits;
+        
+    newCacheEntry.roiOn = cacheEntry.roiOn;
+    newCacheEntry.contrastOn = cacheEntry.contrastOn;
+    newCacheEntry.waypointsOn = cacheEntry.waypointsOn;
+    newCacheEntry.tubeOn = cacheEntry.tubeOn;
+    newCacheEntry.refOn = cacheEntry.refOn;
+    newCacheEntry.midlineOn = cacheEntry.midlineOn;
+    newCacheEntry.metricsOn = cacheEntry.metricsOn;
+    newCacheEntry.quickMeasureOn = cacheEntry.quickMeasureOn;
+    newCacheEntry.displayUnits = 'none'; %we're forced to go with something safe here, since we have no idea
+        
+    newCacheEntry.waypoints = cacheEntry.waypoints;
+    newCacheEntry.tubePoints = cacheEntry.tubePoints;
+    newCacheEntry.refPoints = cacheEntry.refPoints;
+    newCacheEntry.midlinePoints = cacheEntry.midlinePoints;
+    newCacheEntry.metricPoints = cacheEntry.metricPoints;
+    newCacheEntry.quickMeasurePoints = cacheEntry.quickMeasurePoints;
 end
 

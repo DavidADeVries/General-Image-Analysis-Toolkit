@@ -78,17 +78,18 @@ function [files, patientId, studyDate] = createFiles(folderPath, patientId, stud
                         patientId = newPatientId;
                     end
                     
-                    if isfield(dicomInfo, 'StudyDate') && isempty(studyDate)
-                        studyDate = dicomInfo.StudyDate;
-                    end
-                    
                     if strcmp(patientId, newPatientId) %verify all the files are from the same patient
                         
                         numFiles = numFiles + 1;
                         
                         files(numFiles) = createFile(name, dicomInfo, completeFilepath, dicomImage);
+                        
+                        if isfield(dicomInfo, 'StudyDate') && isempty(studyDate)
+                            studyDate = dicomInfo.StudyDate;
+                        end
                     else
-                        patientIdConflictDialog(patientId, newPatientId, completeFilepath);
+                        waitfor(patientIdConflictDialog(patientId, newPatientId, completeFilepath));
+                        drawnow;
                     end
                 end
             end

@@ -17,7 +17,7 @@ classdef File
         function file = File(name, dicomInfo, imagePath, image)                        
             file.name = name;
             file.dicomInfo = dicomInfo;
-            file.imagePath = imagePath;
+            file.imagePath = imagePath(length(Constants.ROOT_PATH)+1:length(imagePath)); %remove the root path, everything is relative to that
             file.date = Date(dicomInfo.StudyDate);
             
             file = file.setToDefaultZoom(image);
@@ -25,17 +25,26 @@ classdef File
             file.undoCache = UndoCache(file);
         end
         
+        %% reset %%
+        function file = reset(file, image)
+            file = file.setToDefaultZoom(image);
+            
+            file = resetFile(file);
+        end
+        
         %% getImage %%
         function image = getImage(file)
             if isempty(file)
                 image = [];
             else
+                filepath = strcat(Constants.ROOT_PATH, file.imagePath);
+                
                 try
-                    image = double(dicomread(file.imagePath));
+                    image = double(dicomread(filepath));
                 catch
                     image = [];
                     
-                    message = ['An error occurred when trying to open the file at: ', file.imagePath];
+                    message = ['An error occurred when trying to open the file at: ', filepath];
                     icon = 'error';
                     title = 'File Error';
                     
