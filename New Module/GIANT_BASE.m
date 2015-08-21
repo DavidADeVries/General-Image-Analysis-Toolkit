@@ -29,7 +29,7 @@ addpath(genpath(strcat(Constants.GIANT_PATH, 'GIANT Code')));
 
 % Edit the above text to modify the response to help GIANT_BASE
 
-% Last Modified by GUIDE v2.5 30-Jul-2015 11:32:14
+% Last Modified by GUIDE v2.5 20-Aug-2015 11:08:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -314,6 +314,14 @@ function latestImage_ClickedCallback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 giantLatestImage(hObject, handles);
+
+% --------------------------------------------------------------------
+function resetImage_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to resetImage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+giantResetImage(hObject, handles);
 
 
 % % DROP-DOWN SELECTORS % %
@@ -695,6 +703,14 @@ function menuTools_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% --------------------------------------------------------------------
+function menuResetImage_Callback(hObject, eventdata, handles)
+% hObject    handle to menuResetImage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+resetImage_ClickedCallback(hObject, eventdata, handles);
+
 
 
 % MENU VIEW (TOGGLE) CALLBACKS
@@ -706,8 +722,4 @@ function menuView_Callback(hObject, eventdata, handles)
 % hObject    handle to menuView (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-
-
 

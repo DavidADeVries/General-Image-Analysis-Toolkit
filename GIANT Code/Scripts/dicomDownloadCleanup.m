@@ -298,6 +298,10 @@ function [patientName, studyDescription, studyTime, seriesNumber, seriesDescript
     
     if isfield(dicomHeader, 'StudyDate')
         studyDateString = dicomHeader.StudyDate;
+        
+        if length(studyDateString) ~= 8
+            studyDateString = '00000101';
+        end
     else
         studyDateString = '00000101'; %Jan 1, 0000 as dummy date
     end

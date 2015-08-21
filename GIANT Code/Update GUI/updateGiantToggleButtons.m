@@ -97,6 +97,9 @@ if ~isempty(currentPatient) %add in patient operations
                 set(handles.zoomOut, 'Enable', 'on');
                 set(handles.pan, 'Enable', 'on');
                 
+                set(handles.resetImage, 'Enable', 'on');
+                set(handles.menuResetImage, 'Enable', 'on');
+                
                    
                 % undo/redo buttons
                 
