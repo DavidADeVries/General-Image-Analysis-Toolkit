@@ -34,8 +34,8 @@ classdef NewModuleFile < File
         %% ** MANDATORY FUNCTIONS ** %%
         
         %% Constructor %%
-        function newModuleFile = NewModuleFile(name, dicomInfo, imagePath, newVar1, newVar2, newVar3)
-            newModuleFile@File(name, dicomInfo, imagePath); % must use File constructor first
+        function newModuleFile = NewModuleFile(name, dicomInfo, imagePath, image, newVar1, newVar2, newVar3)
+            newModuleFile@File(name, dicomInfo, imagePath, image); % must use File constructor first
             
             % Set any new fields if needed
             %

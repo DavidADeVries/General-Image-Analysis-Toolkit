@@ -3,11 +3,11 @@ classdef Constants
     
         
     properties (Constant = true)
-        % for dev
+        % DEV:
         GIANT_PATH = strcat(HighLevelConstants.BASE_DIRECTORY, '/General Image Analysis Toolkit/GIANT/metadata/');
         ALLOW_CLOSE = true;
         
-        % for released
+        % PROD:
         %GIANT_PATH = strcat(HighLevelConstants.BASE_DIRECTORY, '/General Image Analysis Toolkit/Current Release/metadata/');
         %ALLOW_CLOSE = false;
         
