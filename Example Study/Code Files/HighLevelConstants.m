@@ -6,10 +6,10 @@ classdef HighLevelConstants
         BASE_DIRECTORY = '/data/projects';
     
         % DEV:
-        STUDY_DIRECTORY = '/General Image Analysis Toolkit/GIANT/Example Study';
+        STUDY_DIRECTORY = '/General Image Analysis Toolkit/GIANT/metadata/Example Study';
         
         % PROD:
-        % STUDY_DIRECTORY = '/General Image Analysis Toolkit/GIANT/metadata/New Module/Example Study';
+        % STUDY_DIRECTORY = '/General Image Analysis Toolkit/GIANT/metadata/Example Study';
     end       
     
     methods
